@@ -1,16 +1,18 @@
 import yaml
 from typing import Dict
 
+
 class AtomicConfig():
 
     def __init__(self, attribute: Dict):
         self.attribute = attribute
 
     def __getattr__(self, key):
-        print(f'Trying to retrieve {key}')
         attribute_value = self.attribute.get(key)
         if attribute_value is None:
             raise AttributeError(f'{self.attribute} has no attribute {key}')
+        return attribute_value
+
 
 class Config():
 
@@ -22,7 +24,6 @@ class Config():
     def __getattr__(self, key):
 
         try:
-            print(f'Trying to rerieve {key}')
             return getattr(self.config, key)
         except AttributeError as e:
             raise AttributeError(e)
@@ -52,6 +53,8 @@ class Config():
                 # Convert value to atomic config
                 if isinstance(value, dict):
                     config = self.config_from_dict(value)
+                elif isinstance(value, list):
+                    config = self.config_from_list(value)
                 else:
                     config = value # Atomic value (str, int, float, etc.)
                 temp_dict[key] = config
@@ -64,7 +67,6 @@ class Config():
     def config_from_list(self, subconfig):
 
         if isinstance(subconfig, list):
-            # Use a list to wrap a list. Don't @ me.
             temp_list = []
             for em in subconfig:
                 if isinstance(em, list):
@@ -74,11 +76,16 @@ class Config():
                 else:
                     config = em
                 temp_list.append(config)
+        else:
+            temp_list = subconfig
+        return temp_list
 
 
 if __name__ == '__main__':
     config = Config('config.yml')
     print(config.name)
+    print(config.list2)
+    print(config.list2[0].el1)
     # print(config.count, type(config.count))
     # print(config.one, config.list.one.one_bar)
     # c1 = AtomicConfig(4)

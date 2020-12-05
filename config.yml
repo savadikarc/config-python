@@ -1,6 +1,9 @@
-# name: "Begin"
-# count: 0
-# list:
-#   one:
-#     one_bar: 1
-1
+name: "Begin"
+count: 0
+list:
+  one:
+    one_bar: 1
+list2:
+  - el1: 0
+  - 8
+  - 9
