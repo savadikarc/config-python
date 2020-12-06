@@ -1,14 +1,14 @@
-'''
+"""
 A module to conveniently access yaml parsed dictionary variables as class object attributes.
-'''
+"""
 import yaml
 from .wrappers import KeyedConfig, IndexedConfig
 
 class Config():
 
-    '''
+    """
     Main class to access config variables.
-    '''
+    """
 
     def __init__(self, config_file):
         self.config_file = config_file
@@ -32,17 +32,17 @@ class Config():
             raise TypeError(error) from error
 
     def load_yaml(self):
-        '''
+        """
         Load yaml file into python dict.
-        '''
+        """
         with open(self.config_file, 'r') as handle:
             config_dict = yaml.safe_load(handle)
         return config_dict
 
     def convert_config_dict(self, subconfig):
-        '''
+        """
         Convert outermost parsed structure.
-        '''
+        """
         # Outermost
         if isinstance(subconfig, dict):
             self.config = Config.config_from_dict(subconfig)
@@ -53,9 +53,9 @@ class Config():
 
     @staticmethod
     def config_from_dict(subconfig):
-        '''
+        """
         Convert parsed dictionary into KeyedConfig
-        '''
+        """
         if isinstance(subconfig, dict):
             # Use a dict to wrap a dict. Don't @ me.
             temp_dict = {}
@@ -76,9 +76,9 @@ class Config():
 
     @staticmethod
     def config_from_list(subconfig_list):
-        '''
+        """
         Convert list of config variables into list of KeyedConfig objects.
-        '''
+        """
         if isinstance(subconfig_list, list):
             config_list = []
             for subconfig_element in subconfig_list:
