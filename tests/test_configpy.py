@@ -12,9 +12,8 @@ def test_parser():
 def test_parser_outer_list():
     file = 'tests/config2.yml'
     config = parser.Config(file)
-    print(config.config_dict)
     assert config[0].param1 == 0
-    #assert config[1].param2.nested_param1 == 'some_str'
+    assert config[1].param2.nested_param1 == 'some_str'
 
 def test_parser_exception():
     file = 'tests/config.yml'

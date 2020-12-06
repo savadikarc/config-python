@@ -8,10 +8,11 @@ class KeyedConfig:
         self.attribute = attribute
 
     def __getattr__(self, key):
-        attribute_value = self.attribute.get(key)
-        if attribute_value is None:
+        try:
+            attribute_value = self.attribute[key]
+            return attribute_value
+        except KeyError:
             raise AttributeError(f'{self.attribute} has no attribute {key}')
-        return attribute_value
 
 
 class IndexedConfig:
@@ -22,4 +23,7 @@ class IndexedConfig:
         self.value = value
 
     def __getitem__(self, index):
-        return self.value[index]
+        try:
+            return self.value[index]
+        except IndexError:
+            raise IndexError(f'Index {index} out of range.')
