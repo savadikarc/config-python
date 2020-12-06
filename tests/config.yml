@@ -3,9 +3,9 @@ count: 0
 nested:
   one:
     one_bar: 1
-list2:
+list:
   - el1: 0
   - el2:
-    - rty
-    - tty
+    - some_string_param1
+    - some_string_param2
   - 9
