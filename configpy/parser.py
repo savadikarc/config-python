@@ -1,8 +1,15 @@
-import yaml
+'''
+A module to conveniently access yaml parsed dictionary variables as class object attributes.
+'''
 from typing import Dict
+import yaml
 
 
 class AtomicConfig():
+
+    '''
+    Wrapper class for dict supporting value retrival using . operator.
+    '''
 
     def __init__(self, attribute: Dict):
         self.attribute = attribute
@@ -16,26 +23,33 @@ class AtomicConfig():
 
 class Config():
 
+    '''
+    Main class to access config variables.
+    '''
+
     def __init__(self, config_file):
         self.config_file = config_file
-        self.load_yaml()
+        self.config_dict = self.load_yaml()
         self.convert_config_dict(self.config_dict)
 
     def __getattr__(self, key):
-
         try:
             return getattr(self.config, key)
-        except AttributeError as e:
-            raise AttributeError(e)
+        except AttributeError as error:
+            raise AttributeError(error) from error
 
     def load_yaml(self):
-
-        with open(self.config_file, 'r') as f:
-            config_dict = yaml.safe_load(f)
-        self.config_dict = config_dict
+        '''
+        Load yaml file into python dict.
+        '''
+        with open(self.config_file, 'r') as handle:
+            config_dict = yaml.safe_load(handle)
+        return config_dict
 
     def convert_config_dict(self, subconfig):
-        
+        '''
+        Convert outermost parsed structure.
+        '''
         # Outermost
         if isinstance(subconfig, dict):
             self.config = self.config_from_dict(subconfig)
@@ -45,7 +59,9 @@ class Config():
             self.config = subconfig
 
     def config_from_dict(self, subconfig):
-
+        '''
+        Convert parsed dictionary into AtomicConfig
+        '''
         if isinstance(subconfig, dict):
             # Use a dict to wrap a dict. Don't @ me.
             temp_dict = {}
@@ -64,30 +80,20 @@ class Config():
             wrapped_config = subconfig
         return wrapped_config
 
-    def config_from_list(self, subconfig):
-
-        if isinstance(subconfig, list):
+    def config_from_list(self, subconfig_list):
+        '''
+        Convert list of config variables into list of AtomicConfig objects.
+        '''
+        if isinstance(subconfig_list, list):
             temp_list = []
-            for em in subconfig:
-                if isinstance(em, list):
-                    config = self.config_from_list(em)
-                elif isinstance(em, dict):
-                    config = self.config_from_dict(em)
+            for subconfig_element in subconfig_list:
+                if isinstance(subconfig_element, list):
+                    config = self.config_from_list(subconfig_element)
+                elif isinstance(subconfig_element, dict):
+                    config = self.config_from_dict(subconfig_element)
                 else:
-                    config = em
+                    config = subconfig_element
                 temp_list.append(config)
         else:
-            temp_list = subconfig
+            temp_list = subconfig_list
         return temp_list
-
-
-if __name__ == '__main__':
-    config = Config('config.yml')
-    print(config.name)
-    print(config.list2)
-    print(config.list2[0].el1)
-    # print(config.count, type(config.count))
-    # print(config.one, config.list.one.one_bar)
-    # c1 = AtomicConfig(4)
-    # c2 = AtomicConfig(c1, 'c1')
-    # print(c1.c1)

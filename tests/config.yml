@@ -1,9 +1,11 @@
 name: "Begin"
 count: 0
-list:
+nested:
   one:
     one_bar: 1
 list2:
   - el1: 0
-  - 8
+  - el2:
+    - rty
+    - tty
   - 9
