@@ -93,8 +93,3 @@ class Config():
             return wrapped_config_list
         else:
             raise TypeError(f'Input with type {type(subconfig_list)} cannot be parsed as a list.')
-
-if __name__ == '__main__':
-    file = 'tests/config2.yml'
-    conf = Config(file)
-    print(conf.__dict__)
