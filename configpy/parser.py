@@ -1,25 +1,8 @@
 '''
 A module to conveniently access yaml parsed dictionary variables as class object attributes.
 '''
-from typing import Dict
 import yaml
-
-
-class AtomicConfig():
-
-    '''
-    Wrapper class for dict supporting value retrival using . operator.
-    '''
-
-    def __init__(self, attribute: Dict):
-        self.attribute = attribute
-
-    def __getattr__(self, key):
-        attribute_value = self.attribute.get(key)
-        if attribute_value is None:
-            raise AttributeError(f'{self.attribute} has no attribute {key}')
-        return attribute_value
-
+from .wrappers import KeyedConfig, IndexedConfig
 
 class Config():
 
@@ -38,6 +21,16 @@ class Config():
         except AttributeError as error:
             raise AttributeError(error) from error
 
+    def __getitem__(self, index):
+        if not isinstance(self.config, IndexedConfig):
+            raise TypeError(f'Config is not iterable.')
+        try:
+            return self.config[index]
+        except IndexError as error:
+            raise IndexError(error) from error
+        except TypeError as error:
+            raise TypeError(error) from error
+
     def load_yaml(self):
         '''
         Load yaml file into python dict.
@@ -52,15 +45,16 @@ class Config():
         '''
         # Outermost
         if isinstance(subconfig, dict):
-            self.config = self.config_from_dict(subconfig)
+            self.config = Config.config_from_dict(subconfig)
         elif isinstance(subconfig, list):
-            self.config = self.config_from_list(subconfig)
+            self.config = Config.config_from_list(subconfig)
         else:
             self.config = subconfig
 
-    def config_from_dict(self, subconfig):
+    @staticmethod
+    def config_from_dict(subconfig):
         '''
-        Convert parsed dictionary into AtomicConfig
+        Convert parsed dictionary into KeyedConfig
         '''
         if isinstance(subconfig, dict):
             # Use a dict to wrap a dict. Don't @ me.
@@ -68,32 +62,39 @@ class Config():
             for key, value in subconfig.items():
                 # Convert value to atomic config
                 if isinstance(value, dict):
-                    config = self.config_from_dict(value)
+                    config = Config.config_from_dict(value)
                 elif isinstance(value, list):
-                    config = self.config_from_list(value)
+                    config = Config.config_from_list(value)
                 else:
                     config = value # Atomic value (str, int, float, etc.)
                 temp_dict[key] = config
             # Wrap
-            wrapped_config = AtomicConfig(temp_dict)
+            wrapped_config = KeyedConfig(temp_dict)
+            return wrapped_config
         else:
-            wrapped_config = subconfig
-        return wrapped_config
+            raise TypeError(f'Input with type {type(subconfig)} cannot be parsed as a dict.')
 
-    def config_from_list(self, subconfig_list):
+    @staticmethod
+    def config_from_list(subconfig_list):
         '''
-        Convert list of config variables into list of AtomicConfig objects.
+        Convert list of config variables into list of KeyedConfig objects.
         '''
         if isinstance(subconfig_list, list):
-            temp_list = []
+            config_list = []
             for subconfig_element in subconfig_list:
                 if isinstance(subconfig_element, list):
-                    config = self.config_from_list(subconfig_element)
+                    config = Config.config_from_list(subconfig_element)
                 elif isinstance(subconfig_element, dict):
-                    config = self.config_from_dict(subconfig_element)
+                    config = Config.config_from_dict(subconfig_element)
                 else:
                     config = subconfig_element
-                temp_list.append(config)
+                config_list.append(config)
+            wrapped_config_list = IndexedConfig(config_list)
+            return wrapped_config_list
         else:
-            temp_list = subconfig_list
-        return temp_list
+            raise TypeError(f'Input with type {type(subconfig_list)} cannot be parsed as a list.')
+
+if __name__ == '__main__':
+    file = 'tests/config2.yml'
+    conf = Config(file)
+    print(conf.__dict__)
