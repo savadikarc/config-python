@@ -1,3 +1,6 @@
+"""
+Wrappers for dict and list to facilitate . based and indexed retrieval of params.
+"""
 from typing import Dict, List
 
 class KeyedConfig:

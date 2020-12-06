@@ -23,7 +23,7 @@ class Config():
 
     def __getitem__(self, index):
         if not isinstance(self.config, IndexedConfig):
-            raise TypeError(f'Config is not iterable.')
+            raise TypeError('Config is not iterable.')
         try:
             return self.config[index]
         except IndexError as error:
