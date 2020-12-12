@@ -16,7 +16,7 @@ list_param:
 
 ```python
 import configpy
-config = YAMLConfig('config.yml')
+config = configpy.YAMLConfig('config.yml')
 assert config.str_param == "some value"
 assert config.int_param == 123
 assert config.nested_param.param1 == 1
