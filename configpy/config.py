@@ -1,5 +1,5 @@
 """
-A module to conveniently access yaml parsed dictionary variables as class object attributes.
+A module to conveniently access file-based config variables as class object attributes.
 """
 import yaml
 from .wrappers import KeyedConfig, IndexedConfig
@@ -12,44 +12,47 @@ class Config():
 
     def __init__(self, config_file):
         self.config_file = config_file
-        self.config_dict = self.load_yaml()
-        self.convert_config_dict(self.config_dict)
+        self.config_dict = self.parse_file()
+        self.__config__ = Config.convert_config_dict(self.config_dict)
 
     def __getattr__(self, key):
         try:
-            return getattr(self.config, key)
+            if not '__config__' in self.__dict__:
+                raise AttributeError('Cannot retrieve attributes before Config.__init__() call.')
+            return getattr(self.__config__, key)
         except AttributeError as error:
             raise AttributeError(error) from error
 
     def __getitem__(self, index):
-        if not isinstance(self.config, IndexedConfig):
-            raise TypeError('Config is not iterable.')
         try:
-            return self.config[index]
+            if not '__config__' in self.__dict__:
+                raise AttributeError('Cannot retrieve attributes before Config.__init__() call.')
+            if not isinstance(self.__config__, IndexedConfig):
+                raise TypeError('Config is not iterable.')
+            return self.__config__[index]
         except IndexError as error:
             raise IndexError(error) from error
         except TypeError as error:
             raise TypeError(error) from error
 
-    def load_yaml(self):
-        """
-        Load yaml file into python dict.
-        """
-        with open(self.config_file, 'r') as handle:
-            config_dict = yaml.safe_load(handle)
-        return config_dict
+    def parse_file(self):
+        raise NotImplementedError
 
-    def convert_config_dict(self, subconfig):
+    @staticmethod
+    def convert_config_dict(subconfig):
         """
         Convert outermost parsed structure.
         """
         # Outermost
         if isinstance(subconfig, dict):
-            self.config = Config.config_from_dict(subconfig)
+            if '__config__' in subconfig.keys():
+                raise AttributeError('Outermost attribute name cannot match internal variable name __config__.')
+            parsed_config = Config.config_from_dict(subconfig)
         elif isinstance(subconfig, list):
-            self.config = Config.config_from_list(subconfig)
+            parsed_config = Config.config_from_list(subconfig)
         else:
-            self.config = subconfig
+            parsed_config = IndexedConfig([subconfig])
+        return parsed_config
 
     @staticmethod
     def config_from_dict(subconfig):

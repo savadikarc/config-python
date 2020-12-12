@@ -3,6 +3,7 @@ count: 0
 nested:
   one:
     one_bar: 1
+  __config__: 9
 list:
   - el1: 0
   - el2:
