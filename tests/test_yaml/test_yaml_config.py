@@ -2,7 +2,7 @@ import pytest
 from configpy import yaml_config
 
 
-def test_yaml_yaml_config():
+def test_yaml_config():
     file = 'tests/test_yaml/config.yml'
     config = yaml_config.YAMLConfig(file)
     assert config.name == 'Begin'
@@ -10,6 +10,7 @@ def test_yaml_yaml_config():
     assert config.nested.__config__ == 9
     assert config.list[0].el1 == 0
     assert config.list[1].el2[0] == 'some_string_param1'
+    assert config.list[2] == 9
 
 def test_yaml_config_outer_list():
     file = 'tests/test_yaml/config2.yml'
