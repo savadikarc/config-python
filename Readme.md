@@ -2,6 +2,11 @@
 
 Convert python dictionary-parsable config files into object-style attributes.
 
+### Installation
+```sh
+python setup.py install
+```
+
 ### Using with YAML config
 
 ```yaml
