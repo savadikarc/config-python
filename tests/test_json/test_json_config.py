@@ -12,6 +12,15 @@ def test_json_config():
     assert config.list[1].el2[0] == 'some_string_param1'
     assert config.list[2] == 9
 
+def test_config_readme():
+    config = json_config.JSONConfig('tests/test_json/config_readme.json')
+    assert config.str_param == "some value"
+    assert config.int_param == 123
+    assert config.nested_param.param1 == 1
+    assert config.nested_param.param2 == 2
+    assert config.list_param[0].element1 == 1
+    assert config.list_param[1] == 2
+
 def test_json_config_outer_list():
     file = 'tests/test_json/config2.json'
     config = json_config.JSONConfig(file)
