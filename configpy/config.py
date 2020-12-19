@@ -1,7 +1,6 @@
 """
 A module to conveniently access file-based config variables as class object attributes.
 """
-import yaml
 from .wrappers import KeyedConfig, IndexedConfig
 
 class Config():
