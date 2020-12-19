@@ -12,6 +12,15 @@ def test_yaml_config():
     assert config.list[1].el2[0] == 'some_string_param1'
     assert config.list[2] == 9
 
+def test_config_readme():
+    config = yaml_config.YAMLConfig('tests/test_yaml/config_readme.yml')
+    assert config.str_param == "some value"
+    assert config.int_param == 123
+    assert config.nested_param.param1 == 1
+    assert config.nested_param.param2 == 2
+    assert config.list_param[0].element1 == 1
+    assert config.list_param[1] == 2
+
 def test_yaml_config_outer_list():
     file = 'tests/test_yaml/config2.yml'
     config = yaml_config.YAMLConfig(file)

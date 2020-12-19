@@ -1,0 +1,12 @@
+{
+    "str_param": "some value",
+    "int_param": 123,
+    "nested_param": {
+      "param1": 1,
+      "param2": 2
+    },
+    "list_param": [
+      {"element1": 1},
+      2
+    ]
+}
