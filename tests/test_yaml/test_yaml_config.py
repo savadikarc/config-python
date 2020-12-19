@@ -32,12 +32,12 @@ def test_yaml_list_exception():
     with pytest.raises(TypeError):
         yaml_config.YAMLConfig.config_from_list({})
 
-def test_config_value():
+def test_illegal_config_value():
     file = 'tests/test_yaml/illegal_config.yml'
     with pytest.raises(AttributeError):
         yaml_config.YAMLConfig(file)
 
-def test_config_value2():
+def test_single_config_value():
     file = 'tests/test_yaml/single_element.yml'
     config = yaml_config.YAMLConfig(file)
     assert config[0] == 'element'
