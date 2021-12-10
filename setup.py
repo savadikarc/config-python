@@ -1,6 +1,6 @@
 import setuptools
 
-with open("Readme.md", "r", encoding="utf-8") as fh:
+with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
@@ -12,7 +12,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/savadikarc/config-python",
-    install_requires=['pyyaml>=5.3.1'],
+    install_requires=['pyyaml>=5.4'],
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
